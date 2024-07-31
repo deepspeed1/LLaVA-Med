@@ -4,7 +4,7 @@ from llava.model import LlavaMistralForCausalLM
 from llava.constants import DEFAULT_IMAGE_PATCH_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN
 
 
-def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, load_4bit=False, device_map="auto", device="cuda"):
+def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, load_4bit=False, device_map="auto", device="cuda", low_cpu_mem_usage_ = True):
 
     kwargs = {}
 
@@ -29,7 +29,7 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
                 tokenizer = AutoTokenizer.from_pretrained(model_path)
                 model = LlavaMistralForCausalLM.from_pretrained(
                     model_path,
-                    low_cpu_mem_usage=True,
+                    low_cpu_mem_usage=low_cpu_mem_usage_,
                     use_flash_attention_2=False,
                     **kwargs
                 )
