@@ -14,7 +14,6 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
     if load_8bit:
         kwargs['load_in_8bit'] = True
     elif load_4bit:
-        kwargs['load_in_4bit'] = True
         kwargs['quantization_config'] = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_compute_dtype=torch.float16,
@@ -30,7 +29,7 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
                 tokenizer = AutoTokenizer.from_pretrained(model_path)
                 model = LlavaMistralForCausalLM.from_pretrained(
                     model_path,
-                    low_cpu_mem_usage=False,
+                    low_cpu_mem_usage=True,
                     use_flash_attention_2=False,
                     **kwargs
                 )
@@ -70,9 +69,7 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
         vision_tower = model.get_vision_tower()
         if not vision_tower.is_loaded:
             vision_tower.load_model()
-        vision_tower.to(device=device, dtype=torch.float16)
-        model.model.mm_projector.to(device=device, dtype=torch.float16)
-        model.to(device=device, dtype=torch.float16)
+
         image_processor = vision_tower.image_processor
 
     if hasattr(model.config, "max_sequence_length"):
